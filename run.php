@@ -46,7 +46,7 @@ try {
     if (!file_exists($alertedMonitorsFilename)) {
         touch($alertedMonitorsFilename);
     }
-    $alertedMonitors = file($alertedMonitorsFilename);
+    $alertedMonitors = array_map('intval', file($alertedMonitorsFilename));
 
     $pushy = new \Pushy\Client(getenv('PUSHOVER_APIKEY'));
     $user = new \Pushy\User(getenv('PUSHOVER_USERKEY'));
