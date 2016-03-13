@@ -1,9 +1,10 @@
 <?php
-require_once('vendor/autoload.php');
+
+require_once 'vendor/autoload.php';
 
 use UptimeRobot\API as UptimeRobot;
 
-$climate = new League\CLImate\CLImate;
+$climate = new League\CLImate\CLImate();
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 
@@ -13,13 +14,13 @@ try {
     $dotenv->required(['UPTIMEROBOT_APIKEY', 'PUSHOVER_APIKEY', 'PUSHOVER_USERKEY', 'MONITOR_UPTIME_THRESHOLD'])->notEmpty();
     $dotenv->required('MONITOR_UPTIME_THRESHOLD')->isInteger();
 
-    $uptimeRobot = new UptimeRobot( [
+    $uptimeRobot = new UptimeRobot([
         'apiKey' => getenv('UPTIMEROBOT_APIKEY'),
-        'url' => 'http://api.uptimerobot.com'
+        'url'    => 'http://api.uptimerobot.com',
     ]);
 
     $results = $uptimeRobot->request('/getMonitors', [
-        'statuses' => 9,
+        'statuses'          => 9,
         'customUptimeRatio' => 1,
     ]);
 
@@ -29,9 +30,9 @@ try {
         foreach ($results['monitors']['monitor'] as $monitor) {
             $id = $monitor['id'];
             $data = [
-                'name' => $monitor['friendlyname'],
-                'url' => $monitor['url'],
-                'status' => (int) $monitor['status'],
+                'name'        => $monitor['friendlyname'],
+                'url'         => $monitor['url'],
+                'status'      => (int) $monitor['status'],
                 'uptimeRatio' => (int) $monitor['customuptimeratio'],
             ];
 
@@ -51,7 +52,7 @@ try {
     $user = new \Pushy\User(getenv('PUSHOVER_USERKEY'));
 
     foreach ($monitors as $id => $monitor) {
-        if (!in_array($id, $alertedMonitors)) {
+        if (!in_array($id, $alertedMonitors, true)) {
             $message = (new \Pushy\Message())
                 ->setTitle('STILL DOWN: '.$monitor['name'])
                 ->setMessage('Uptime ratio is '.$monitor['uptimeRatio'].'%')
@@ -65,4 +66,3 @@ try {
 } catch (Exception $e) {
     $climate->error($e->getMessage());
 }
-
