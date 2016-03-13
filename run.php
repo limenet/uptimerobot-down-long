@@ -26,7 +26,7 @@ try {
 
     $monitors = [];
 
-    if (is_array($results['monitors']['monitor'])) {
+    if (isset($results['monitors']['monitor'])) {
         foreach ($results['monitors']['monitor'] as $monitor) {
             $id = $monitor['id'];
             $data = [
