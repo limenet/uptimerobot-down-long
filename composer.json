@@ -1,0 +1,8 @@
+{
+    "require": {
+        "vlucas/phpdotenv": "^2.2",
+        "sqmk/pushy": "^1.4",
+        "ckdarby/php-uptimerobot": "^0.1.0",
+        "league/climate": "^3.2"
+    }
+}

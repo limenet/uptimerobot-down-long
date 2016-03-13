@@ -1,0 +1,9 @@
+preset: recommended
+
+linting: true
+
+risky: true
+
+enabled:
+  - strict
+  - strict_param
