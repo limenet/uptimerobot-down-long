@@ -17,13 +17,13 @@ try {
         'PUSHOVER_APIKEY',
         'PUSHOVER_USERKEY',
         'UPTIME_THRESHOLD_PERCENTAGE',
-        'MONITOR_INTERVAL_IN_DAYS'
+        'MONITOR_INTERVAL_IN_DAYS',
     ])->notEmpty();
 
     $dotenv->required(
     [
         'UPTIME_THRESHOLD_PERCENTAGE',
-        'MONITOR_INTERVAL_IN_DAYS'
+        'MONITOR_INTERVAL_IN_DAYS',
     ])->isInteger();
 
     $uptimeRobot = new UptimeRobot([
