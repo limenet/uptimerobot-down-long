@@ -11,8 +11,20 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 try {
     $dotenv->load();
 
-    $dotenv->required(['UPTIMEROBOT_APIKEY', 'PUSHOVER_APIKEY', 'PUSHOVER_USERKEY', 'MONITOR_UPTIME_THRESHOLD'])->notEmpty();
-    $dotenv->required('MONITOR_UPTIME_THRESHOLD')->isInteger();
+    $dotenv->required(
+    [
+        'UPTIMEROBOT_APIKEY',
+        'PUSHOVER_APIKEY',
+        'PUSHOVER_USERKEY',
+        'UPTIME_THRESHOLD_PERCENTAGE',
+        'MONITOR_INTERVAL_IN_DAYS'
+    ])->notEmpty();
+
+    $dotenv->required(
+    [
+        'UPTIME_THRESHOLD_PERCENTAGE',
+        'MONITOR_INTERVAL_IN_DAYS'
+    ])->isInteger();
 
     $uptimeRobot = new UptimeRobot([
         'apiKey' => getenv('UPTIMEROBOT_APIKEY'),
@@ -21,7 +33,7 @@ try {
 
     $results = $uptimeRobot->request('/getMonitors', [
         'statuses'          => 9,
-        'customUptimeRatio' => 1,
+        'customUptimeRatio' => getenv('MONITOR_INTERVAL_IN_DAYS'),
     ]);
 
     $monitors = [];
@@ -36,10 +48,12 @@ try {
                 'uptimeRatio' => (int) $monitor['customuptimeratio'],
             ];
 
-            if ($data['status'] === 9 && $data['uptimeRatio'] < getenv('MONITOR_UPTIME_THRESHOLD')) {
+            if ($data['status'] === 9 && $data['uptimeRatio'] < getenv('UPTIME_THRESHOLD_PERCENTAGE')) {
                 $monitors[$id] = $data;
             }
         }
+    } else {
+        throw new Exception($results['message'], 1);
     }
 
     $alertedMonitorsFilename = 'monitors-alerted.txt';
